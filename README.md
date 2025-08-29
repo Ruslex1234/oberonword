@@ -20,4 +20,5 @@ This was a **very popular page in its first year** of use. Over time, players fo
 - 🔒 No backend, no trackers — just static assets  
 - 📱 Works on desktop & mobile
 
-## Repository Structure
+![Grand Master Oberon](https://static.wikia.nocookie.net/tibia/images/4/49/Grand_Master_Oberon.gif/revision/latest/thumbnail/width/360/height/360?cb=20180615195759&path-prefix=en)
+
