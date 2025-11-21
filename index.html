@@ -1,155 +1,480 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oberon Words - Tibia Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #ffd700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .special-scenarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .scenario-card {
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .scenario-card h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .scenario-card .description {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .response-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .response-row {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .response-row td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .response-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .statement {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .statement b {
+            color: #ffd700;
+        }
+
+        .input-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .response-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .response-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .big-copy-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .big-copy-btn:hover {
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .index-cell {
+            font-weight: bold;
+            color: #ffd700;
+            font-size: 1.1rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        .statement-cell {
+            min-width: 200px;
+        }
+
+        .input-cell {
+            width: 50%;
+        }
+
+        .button-cell {
+            width: 140px;
+            text-align: center;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(17, 153, 142, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .response-table {
+                font-size: 0.9rem;
+            }
+
+            .response-row td {
+                padding: 10px;
+            }
+
+            .copy-btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+
+            .statement-cell {
+                min-width: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .response-row {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .response-row td {
+                width: 100%;
+                display: block;
+            }
+
+            .button-cell {
+                width: 100%;
+            }
+
+            .copy-btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
 <body>
+    <div class="container">
+        <h1>Oberon Words</h1>
+        <p class="subtitle">Quick-copy responses for Tibia's Grand Master Oberon encounters</p>
 
-<h1 align="center">Oberon Words</h1>
+        <!-- Special Scenarios Section -->
+        <div class="section">
+            <h2 class="section-title">Special Scenarios (Combined Responses)</h2>
+            <div class="special-scenarios">
+                <div class="scenario-card">
+                    <h3>Words Starting with 'T'</h3>
+                    <p class="description">Response for words beginning with the letter T</p>
+                    <textarea class="response-input" id="scenario-t" rows="3" readonly>Are you ever going to fight or do you prefer talking! Then let me show you the concept of mortality before it! Dare strike up a Minnesang and you will receive your last accolade!</textarea>
+                    <button class="copy-btn big-copy-btn" onclick="copyScenario('scenario-t', this)">Copy T-Words Response</button>
+                </div>
 
-<table align="center" border="4">
-<tr>
-	<td>
-		[I]  The world will suffer for its idle <b>laziness!</b>	</td>
-    <td>
-	<input type="text" value="Are you ever going to fight or do you prefer talking!" id="one">
-	</td>
-    <td><button onclick="myFunction1()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[II] People fall at my feet when they see me <b>coming!</b>
-    </td>
-    <td>
-	<input type="text" value="Even before they smell your breath?" id="two">
-    </td>
-	<td><button onclick="myFunction2()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-    [III] I will remove you from this plane of <b>existence!</b>
-    </td>
-    <td>
-	<input type="text" value="Too bad you barely exist at all!" id="three">
-    </td>
-	<td>
-	<button onclick="myFunction3()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[IV] ULTAH SALID'AR, <b>ESDO LO!</b>
-    </td>
-    <td>
-	<input type="text" value="SEHWO ASIMO, TOLIDO ESD" id="four">
-    </td>
-	<td>
-    <button onclick="myFunction4()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[V] Dragons will soon rule this world, I am their <b>herald!</b>
-    </td>
-    <td>
-	<input type="text" value="Excuse me but I still do not get the message!" id="five">
-    </td>
-	<td>
-	<button onclick="myFunction5()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[VI] I lead the most honourable and formidable following of <b>knights!</b>
-	</td>
-    <td>
-<input type="text" value="Then why are we fighting alone right now?" id="six">
-	</td>
-	<td>
-	<button onclick="myFunction6()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[VII] You appear like a worm <b>among men!</b>
-    </td>
-    <td>
-    <input type="text" value="How appropriate, you look like something worms already got the better of!" id="seven">
-    </td>
-	<td>
-	<button onclick="myFunction7()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[VIII] This will be the end of <b>mortal men!</b>
-	</td>
-    <td>
-    <input type="text" value="Then let me show you the concept of mortality before it!" id="eight">
-	</td>
-    <td>
-	<button onclick="myFunction8()">Copy Answer</button>
-	</td>
-</tr>
-<tr>
-	<td>
-		[IX] The true virtues of chivalry are my <b>belief!</b>
-	</td>
-    <td>
-    <input type="text" value="Dare strike up a Minnesang and you will receive your last accolade!" id="nine">
-	</td>
-    <td>
-	<button onclick="myFunction9()">Copy Answer</button>
-	</td>
-</tr>
+                <div class="scenario-card">
+                    <h3>Words NOT Starting with 'T'</h3>
+                    <p class="description">Response for words that don't begin with T</p>
+                    <textarea class="response-input" id="scenario-non-t" rows="3" readonly>Even before they smell your breath? Too bad you barely exist at all! SEHWO ASIMO, TOLIDO ESD Excuse me but I still do not get the message! Then why are we fighting alone right now? How appropriate, you look like something worms already got the better of!</textarea>
+                    <button class="copy-btn big-copy-btn" onclick="copyScenario('scenario-non-t', this)">Copy Non-T Response</button>
+                </div>
+            </div>
+        </div>
 
-</table>
-<script>
-function myFunction1() {
-  var copyText = document.getElementById("one");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction2() {
-  var copyText = document.getElementById("two");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction3() {
-  var copyText = document.getElementById("three");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction4() {
-  var copyText = document.getElementById("four");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction5() {
-  var copyText = document.getElementById("five");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction6() {
-  var copyText = document.getElementById("six");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction7() {
-  var copyText = document.getElementById("seven");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction8() {
-  var copyText = document.getElementById("eight");
-  copyText.select();
-  document.execCommand("copy");
-}
-function myFunction9() {
-  var copyText = document.getElementById("nine");
-  copyText.select();
-  document.execCommand("copy");
-}
-</script>
+        <!-- Individual Responses Section -->
+        <div class="section">
+            <h2 class="section-title">Individual Responses</h2>
+            <table class="response-table">
+                <tr class="response-row">
+                    <td class="index-cell">[I]</td>
+                    <td class="statement-cell">
+                        <div class="statement">The world will suffer for its idle <b>laziness!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Are you ever going to fight or do you prefer talking!" id="one" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('one', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[II]</td>
+                    <td class="statement-cell">
+                        <div class="statement">People fall at my feet when they see me <b>coming!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Even before they smell your breath?" id="two" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('two', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[III]</td>
+                    <td class="statement-cell">
+                        <div class="statement">I will remove you from this plane of <b>existence!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Too bad you barely exist at all!" id="three" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('three', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[IV]</td>
+                    <td class="statement-cell">
+                        <div class="statement">ULTAH SALID'AR, <b>ESDO LO!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="SEHWO ASIMO, TOLIDO ESD" id="four" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('four', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[V]</td>
+                    <td class="statement-cell">
+                        <div class="statement">Dragons will soon rule this world, I am their <b>herald!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Excuse me but I still do not get the message!" id="five" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('five', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[VI]</td>
+                    <td class="statement-cell">
+                        <div class="statement">I lead the most honourable and formidable following of <b>knights!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Then why are we fighting alone right now?" id="six" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('six', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[VII]</td>
+                    <td class="statement-cell">
+                        <div class="statement">You appear like a worm <b>among men!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="How appropriate, you look like something worms already got the better of!" id="seven" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('seven', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[VIII]</td>
+                    <td class="statement-cell">
+                        <div class="statement">This will be the end of <b>mortal men!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Then let me show you the concept of mortality before it!" id="eight" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('eight', this)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="response-row">
+                    <td class="index-cell">[IX]</td>
+                    <td class="statement-cell">
+                        <div class="statement">The true virtues of chivalry are my <b>belief!</b></div>
+                    </td>
+                    <td class="input-cell">
+                        <input type="text" class="response-input" value="Dare strike up a Minnesang and you will receive your last accolade!" id="nine" readonly>
+                    </td>
+                    <td class="button-cell">
+                        <button class="copy-btn" onclick="copyResponse('nine', this)">Copy</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        // Modern clipboard API with fallback
+        async function copyToClipboard(text) {
+            try {
+                // Try modern clipboard API first
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } else {
+                    // Fallback for older browsers or non-secure contexts
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        return true;
+                    } catch (err) {
+                        document.body.removeChild(textArea);
+                        return false;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                return false;
+            }
+        }
+
+        function showToast(message = 'Copied to clipboard!') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        async function copyResponse(elementId, button) {
+            const input = document.getElementById(elementId);
+            const success = await copyToClipboard(input.value);
+
+            if (success) {
+                button.classList.add('copied');
+                button.textContent = 'Copied!';
+                showToast();
+
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.textContent = 'Copy';
+                }, 2000);
+            }
+        }
+
+        async function copyScenario(elementId, button) {
+            const textarea = document.getElementById(elementId);
+            const success = await copyToClipboard(textarea.value);
+
+            if (success) {
+                button.classList.add('copied');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                showToast('Scenario copied to clipboard!');
+
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.textContent = originalText;
+                }, 2000);
+            }
+        }
+    </script>
 </body>
 </html>
